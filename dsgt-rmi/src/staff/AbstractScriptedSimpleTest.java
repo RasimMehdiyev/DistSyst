@@ -21,7 +21,7 @@ public abstract class AbstractScriptedSimpleTest {
 	 * Add a booking for the given guest in the given room on the given
 	 * date. If the room is not available, throw a suitable Exception.
 	 */
-	protected abstract void addBooking(BookingDetail bookingDetail);
+	protected abstract void addBooking(BookingDetail bookingDetail) throws Exception;
 
 	/**
 	 * Return a list of all the available room numbers for the given date
@@ -56,8 +56,8 @@ public abstract class AbstractScriptedSimpleTest {
 		Integer[] expectedRoomsAfterSecondBooking = {201, 203};
 		checkAvailableRoomsOutput(2, expectedRoomsAfterSecondBooking);
 
-		isRoomAvailable(102, today); //false
-		BookingDetail bd3 = new BookingDetail("Dimitri", 102, today);
+		isRoomAvailable(203, today); //false
+		BookingDetail bd3 = new BookingDetail("Dimitri", 203, today);
 		addBooking(bd3);//booking failure
 
 		//Check available rooms after the booking failure
@@ -67,7 +67,7 @@ public abstract class AbstractScriptedSimpleTest {
 
 		System.out.println("Testing concurrent bookings\n");
 		Integer[] expectedAvailableRooms = {201};
-		testConcurrentBookings();
+		testConcurrency();
 		checkAvailableRoomsOutput(1, expectedAvailableRooms);
 
 	}
@@ -91,58 +91,60 @@ public abstract class AbstractScriptedSimpleTest {
 
     // Many clients request the same or different rooms on the same date
 	// use Thread.sleep()
-	private void testConcurrentBookings() throws Exception {
-		Thread[] bookingThreads = new Thread[3]; // Assuming 3 concurrent booking attempts for simplicity
 
-		// Simulate concurrent bookings by creating a thread for each booking attempt
-		bookingThreads[0] = new Thread(() -> {
-			BookingDetail bd1 = new BookingDetail("John Doe", 203, today);
+    private void testConcurrency() throws Exception{
+		// Create a new instance of the BookingClient
+		BookingClient testInstance = new BookingClient();
+		// Define the date for booking attempts
+		LocalDate today = LocalDate.now();
+
+		// Define booking details for concurrent attempts
+		BookingDetail bd1 = new BookingDetail("John Doe", 201, today);
+		BookingDetail bd2 = new BookingDetail("Jane Doe", 201, today);
+		BookingDetail bd3 = new BookingDetail("Alex Smith", 201, today); // Intentionally the same room as bd1
+
+		// Create threads for each booking attempt
+		Thread t1 = new Thread(() -> {
 			try {
-				addBooking(bd1); // Attempt to book room 101
-				System.out.println("Booking by " + bd1.getGuest() + " attempted.");
+				Thread.sleep(100); // Simulate slight delay
+				testInstance.addBooking(bd1);
+				System.out.println("Booking by " + bd1.getGuest() + " for room " + bd1.getRoomNumber() + " successful.");
 			} catch (Exception e) {
-				System.out.println("Booking by " + bd1.getGuest() + " Smith failed: " + e.getMessage());
+				System.out.println("Booking by " + bd1.getGuest() + " failed: " + e.getMessage());
 			}
 		});
 
-		bookingThreads[1] = new Thread(() -> {
-			BookingDetail bd2 = new BookingDetail("Jane Doe", 203, today);
+		Thread t2 = new Thread(() -> {
 			try {
-				addBooking(bd2); // Attempt to book room 102
-				System.out.println("Booking by " + bd2.getGuest() + " attempted.");
+				testInstance.addBooking(bd2);
+				System.out.println("Booking by " + bd2.getGuest() + " for room " + bd2.getRoomNumber() + " successful.");
 			} catch (Exception e) {
-				System.out.println("Booking by " + bd2.getGuest() + " Smith failed: " + e.getMessage());
+				System.out.println("Booking by " + bd2.getGuest() + " failed: " + e.getMessage());
 			}
 		});
 
-		bookingThreads[2] = new Thread(() -> {
-			BookingDetail bd3 = new BookingDetail("Alex Smith", 203, today);
+		Thread t3 = new Thread(() -> {
 			try {
-				// Introduce a small delay to simulate real-world concurrency better
-				Thread.sleep(100);
-				addBooking(bd3); // Attempt to book room 101 again
-				System.out.println("Booking by " + bd3.getGuest() + " attempted.");
+//				Thread.sleep(100); // Simulate slight delay
+				testInstance.addBooking(bd3);
+				System.out.println("Booking by " + bd3.getGuest() + " for room " + bd3.getRoomNumber() + " successful.");
 			} catch (Exception e) {
-				System.out.println("Booking by " + bd3.getGuest() + " Smith failed: " + e.getMessage());
+				System.out.println("Booking by " + bd3.getGuest() + " failed: " + e.getMessage());
 			}
 		});
 
-		// Start all booking threads
-		for (Thread t : bookingThreads) {
-			t.start();
-		}
+		// Start threads
+		t1.start();
+		t2.start();
+		t3.start();
 
-		// Wait for all threads to finish
-		for (Thread t : bookingThreads) {
-			t.join(); // Wait for this thread to die
-		}
+		// Wait for all threads to complete
+		t1.join();
+		t2.join();
+		t3.join();
 
-		// Check the available rooms after the concurrent bookings
-		System.out.println("Printing the list of available rooms after concurrent bookings\n");
-		Set<Integer> availableRooms = getAvailableRooms(today);
-		// Who booked the room 203?
-
-		System.out.println("List of available rooms (room ID): " + availableRooms);
+		// Final check of available rooms
+		System.out.println("Final available rooms: " + testInstance.getAvailableRooms(today));
 	}
 
 }

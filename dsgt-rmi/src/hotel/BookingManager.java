@@ -5,62 +5,66 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.Map;
 
 public class BookingManager {
 
 	private Room[] rooms;
+	private final Map<Integer, Room> roomMap;
+
+	// main
+	public static void main(String[] args) {
+		BookingManager bm = new BookingManager();
+		System.out.println(bm.isRoomAvailable(101, LocalDate.now())); // true
+		BookingDetail bd1 = new BookingDetail("Ansar", 101, LocalDate.now());
+		bm.addBooking(bd1);
+		System.out.println(bm.isRoomAvailable(101, LocalDate.now())); // false
+		System.out.println(bm.getAvailableRooms(LocalDate.now())); // [102, 201, 203]
+//		bm.run();
+	}
+
 
 	public BookingManager() {
-		this.rooms = initializeRooms();
+		Room[] rooms = initializeRooms();
+		roomMap = new ConcurrentHashMap<>(); // Use ConcurrentHashMap for thread-safe access
+		for (Room room : rooms) {
+			roomMap.put(room.getRoomNumber(), room);
+		}
 	}
 
 	public Set<Integer> getAllRooms() {
-		Set<Integer> allRooms = new HashSet<Integer>();
-		Iterable<Room> roomIterator = Arrays.asList(rooms);
-		for (Room room : roomIterator) {
-			allRooms.add(room.getRoomNumber());
-		}
-		return allRooms;
+		return new HashSet<>(roomMap.keySet());
 	}
 
 	public boolean isRoomAvailable(Integer roomNumber, LocalDate date) {
-		//implement this method
-		if (rooms != null) {
-			for (Room room : rooms) {
-				if (Objects.equals(room.getRoomNumber(), roomNumber)) {
-					for (BookingDetail booking : room.getBookings()) {
-						if (booking.getDate() == date) {
-							return false;
-						}
+		Room room = roomMap.get(roomNumber);
+		if (room != null) {
+			synchronized (room) { // Synchronize on the room object
+				for (BookingDetail booking : room.getBookings()) {
+					if (booking.getDate().equals(date)) { // Use equals for LocalDate comparison
+						return false;
 					}
-					return true;
 				}
 			}
 		}
-
-		return false;
+		return true;
 	}
 
 	public void addBooking(BookingDetail bookingDetail) {
-		//implement this method
-		if (rooms != null) {
-			for (Room room : rooms) {
-				if (Objects.equals(room.getRoomNumber(), bookingDetail.getRoomNumber())) {
-					room.getBookings().add(bookingDetail);
-				}
-
+		Room room = roomMap.get(bookingDetail.getRoomNumber());
+		if (room != null) {
+			synchronized (room) { // Synchronize on the room object
+				room.getBookings().add(bookingDetail);
 			}
 		}
 	}
 
 	public Set<Integer> getAvailableRooms(LocalDate date) {
-		//implement this method
-		Set<Integer> availableRooms = new HashSet<Integer>();
-		if (rooms != null) {
-			for (Room room : rooms) {
-				if (isRoomAvailable(room.getRoomNumber(), date)) {
-					availableRooms.add(room.getRoomNumber());
-				}
+		Set<Integer> availableRooms = new HashSet<>();
+		for (Room room : roomMap.values()) {
+			if (isRoomAvailable(room.getRoomNumber(), date)) {
+				availableRooms.add(room.getRoomNumber());
 			}
 		}
 		return availableRooms;

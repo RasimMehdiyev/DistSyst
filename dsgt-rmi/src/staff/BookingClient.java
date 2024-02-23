@@ -34,13 +34,13 @@ public class BookingClient extends AbstractScriptedSimpleTest {
 	}
 
 	@Override
-	public void addBooking(BookingDetail bookingDetail) {
+	public void addBooking(BookingDetail bookingDetail) throws Exception{
 		//Implement this method
 	    if (isRoomAvailable(bookingDetail.getRoomNumber(), bookingDetail.getDate())) {
 	        bm.addBooking(bookingDetail);
 	    } else {
 //	        throw new Exception("Room not available");
-			System.out.println("Room not available");
+			throw new Exception ("Dear " + bookingDetail.getGuest() + ", room " + bookingDetail.getRoomNumber() + " is not available");
 	    }
 
 	}
