@@ -1,0 +1,16 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                  xmlns:gs="http://foodmenu.io/gt/webservice">
+    <soapenv:Header/>
+    <soapenv:Body>
+        <gs:addOrderRequest>
+            <gs:meals>
+                <gs:name>Portobello</gs:name>
+                <gs:kcal>300</gs:kcal>
+                <gs:description>Portobello mushrooms, tomatoes, and mozzarella cheese</gs:description>
+                <gs:mealtype>vegan</gs:mealtype>
+                <gs:price>10</gs:price>
+            </gs:meals>
+            <gs:address>123 Main St</gs:address>
+        </gs:addOrderRequest>
+    </soapenv:Body>
+</soapenv:Envelope>
