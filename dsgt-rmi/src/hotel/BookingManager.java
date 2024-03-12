@@ -21,7 +21,6 @@ public class BookingManager {
 		bm.addBooking(bd1);
 		System.out.println(bm.isRoomAvailable(101, LocalDate.now())); // false
 		System.out.println(bm.getAvailableRooms(LocalDate.now())); // [102, 201, 203]
-//		bm.run();
 	}
 
 

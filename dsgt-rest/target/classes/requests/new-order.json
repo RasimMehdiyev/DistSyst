@@ -1,0 +1,26 @@
+{
+  "id": "e2e",
+  "customer": "Rasim Mehdiyev",
+  "date": "2019-12-12",
+  "meals": [
+    {
+      "name": "Burger",
+      "kcal": 500,
+      "mealType": "Meat",
+      "price": 5.99
+    },
+    {
+      "name": "Fries",
+      "kcal": 300,
+      "mealType": "Veggie",
+      "price": 2.99
+    },
+    {
+      "name": "Double Cheese",
+      "kcal": 2000,
+      "price": 10.0,
+      "description": "Double Cheese Burger",
+      "mealType": "MEAT"
+    }
+  ]
+}

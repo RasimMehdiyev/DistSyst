@@ -1,0 +1,8 @@
+/home/rasim/dapp2024work/dsgt-rest/src/main/java/be/kuleuven/foodrestservice/domain/Meal.java
+/home/rasim/dapp2024work/dsgt-rest/src/main/java/be/kuleuven/foodrestservice/FoodRestServiceApplication.java
+/home/rasim/dapp2024work/dsgt-rest/src/main/java/be/kuleuven/foodrestservice/controllers/MealsRestRpcStyleController.java
+/home/rasim/dapp2024work/dsgt-rest/src/main/java/be/kuleuven/foodrestservice/domain/MealsRepository.java
+/home/rasim/dapp2024work/dsgt-rest/src/main/java/be/kuleuven/foodrestservice/domain/MealType.java
+/home/rasim/dapp2024work/dsgt-rest/src/main/java/be/kuleuven/foodrestservice/exceptions/MealNotFoundAdvice.java
+/home/rasim/dapp2024work/dsgt-rest/src/main/java/be/kuleuven/foodrestservice/controllers/MealsRestController.java
+/home/rasim/dapp2024work/dsgt-rest/src/main/java/be/kuleuven/foodrestservice/exceptions/MealNotFoundException.java
