@@ -60,12 +60,14 @@ public class OrderRepository {
         a.setCustomer("John");
         a.setMeals(meals);
         a.setTotalPrice(10.00);
+        a.setDate("2021-06-01");
         orders.put(a.getId(), a);
 
         Order b = new Order();
         b.setId("4237681a-441f-47fc-a747-8e0169bacea1");
         b.setCustomer("Jane");
         b.setMeals(meals2);
+        b.setDate("2021-05-01");
         b.setTotalPrice(7.00);
         orders.put(b.getId(), b);
 
@@ -73,6 +75,7 @@ public class OrderRepository {
         c.setId("cfd1601f-29a0-485d-8d21-7607ec0340c8");
         c.setCustomer("Jack");
         c.setMeals(meals3);
+        c.setDate("2021-04-01");
         c.setTotalPrice(5.00);
         orders.put(c.getId(), c);
     }

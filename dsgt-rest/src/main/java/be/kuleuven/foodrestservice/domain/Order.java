@@ -1,17 +1,13 @@
 package be.kuleuven.foodrestservice.domain;
 
-import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.Link;
-
 import java.util.Collection;
-import java.util.Date;
 
 public class Order {
     private String id;
     private String customer;
     private Collection<Meal> meals;
     private Double totalPrice;
-    private Date date;
+    private String date;
 
     public String getId() {
         return id;
@@ -30,6 +26,12 @@ public class Order {
     }
     public void setMeals(Collection<Meal> meals) {
         this.meals = meals;
+    }
+    public String getDate() {
+        return date;
+    }
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public void addMeal(Meal meal) {

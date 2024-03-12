@@ -30,34 +30,26 @@ public class OrdersRestController {
     @PostMapping("/rest/orders/add")
     EntityModel<Order>  addOrder(@RequestBody Order order) {
         orderRepository.addOrder(order);
-        EntityModel<Order> o = orderToEntityModel(order.getId(), order);
-        return o;
+        return orderToEntityModel(order.getId(), order);
     }
 
     @DeleteMapping("/rest/orders/delete/{id}")
-    EntityModel<Order> deleteOrder(@PathVariable String id) {
+    Collection<EntityModel<Order>> deleteOrder(@PathVariable String id) {
         orderRepository.deleteOrder(id);
-        EntityModel<Order> o = orderToEntityModel(id, orderRepository.findOrder(id).orElseThrow(() -> new OrderNotFoundException(id)));
-        return o;
+        Collection<Order> orders = orderRepository.getAllOrder();
+        return orders.stream().map(order -> orderToEntityModel(order.getId(), order)).toList();
     }
 
     @PutMapping("/rest/orders/update/{id}")
     EntityModel<Order>  updateOrder(@PathVariable String id, @RequestBody Order order) {
         orderRepository.updateOrder(id, order);
-        EntityModel<Order> o = orderToEntityModel(id, orderRepository.findOrder(id).orElseThrow(() -> new OrderNotFoundException(id)));
-        return o;
-    }
-
-    @GetMapping("/rest/orders/totalprice/{id}")
-    Double getTotalPrice(@PathVariable String id) {
-        return orderRepository.getTotalPrice(id);
+        return orderToEntityModel(id, orderRepository.findOrder(id).orElseThrow(() -> new OrderNotFoundException(id)));
     }
 
     private EntityModel<Order> orderToEntityModel(String id, Order order) {
         return EntityModel.of(order,
                 linkTo(methodOn(OrdersRestController.class).getOrderById(id)).withSelfRel(),
                 linkTo(methodOn(OrdersRestController.class).getOrders()).withRel("rest/orders"),
-                linkTo(methodOn(OrdersRestController.class).getTotalPrice(id)).withRel("rest/orders/totalprice/{id}"),
                 linkTo(methodOn(OrdersRestController.class).addOrder(order)).withRel("rest/orders/add"),
                 linkTo(methodOn(OrdersRestController.class).deleteOrder(id)).withRel("rest/orders/delete/{id}"),
                 linkTo(methodOn(OrdersRestController.class).updateOrder(id, order)).withRel("rest/orders/update/{id}"));

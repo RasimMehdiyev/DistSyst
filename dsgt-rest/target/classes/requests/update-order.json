@@ -15,9 +15,9 @@
       "price": 2.99
     },
     {
-      "name": "Double Cheese",
+      "name": "Triple Cheese",
       "kcal": 2000,
-      "price": 10.0,
+      "price": 12.0,
       "description": "Double Cheese Burger",
       "mealType": "MEAT"
     }
